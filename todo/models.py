@@ -3,20 +3,32 @@ from django.utils.timezone import now
 from django.contrib.auth.models import User
 # Create your models here.
 
+
+class Topic(models.Model):
+    Heading=models.CharField(max_length=350)
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.heading
+    
+    
 class TodoTable(models.Model):
+    heading=models.ForeignKey(Topic,related_name='points', on_delete=models.CASCADE, null=True, blank=True)
     title=models.CharField(max_length=200)
     completed=models.BooleanField(default=False)
     
     def __str__(self):
             return self.title
         
+        
 class WordMeaning(models.Model):
+    heading=models.ForeignKey(Topic,related_name='meaning', on_delete=models.CASCADE, null=True, blank=True)
     word=models.TextField()
     meaning=models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.word    
+    
 
 class Publisher(models.Model):
     name=models.CharField(max_length=250)
