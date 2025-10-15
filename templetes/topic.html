@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>All Topics</h2>
+  <a href="{% url 'create_topic' %}" class="btn btn-primary">➕ Add Topic</a>
+</div>
+
+{% if error %}
+<div class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+<table class="table table-bordered bg-white">
+  <thead>
+    <tr>
+      <th>Topic Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for topic in data %}
+    <tr>
+      <td>{{ topic.Heading }}</td>
+      <td>
+        <a href="{% url 'list_points' topic.id %}" class="btn btn-sm btn-success">📄 View Points</a>
+        <a href="{% url 'update_topic' topic.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
+        <a href="{% url 'delete_topic' topic.id %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="2" class="text-center text-muted">No topics yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

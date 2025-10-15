@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>AI Meaning History</h2>
+  <a href="{% url 'delete_all_meanings' %}" class="btn btn-danger">🗑️ Delete All</a>
+</div>
+
+<table class="table table-bordered bg-white mt-3">
+  <thead>
+    <tr>
+      <th>Word</th>
+      <th>Meaning</th>
+      <th>Topic</th>
+      <th>Created At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in data %}
+    <tr>
+      <td>{{ item.word }}</td>
+      <td>{{ item.meaning }}</td>
+      <td>{{ item.heading.Heading }}</td>
+      <td>{{ item.created_at|date:"M d, Y H:i" }}</td>
+      <td>
+        <a href="{% url 'delete_meaning' item.id %}" class="btn btn-sm btn-danger">Delete</a>
+        <a href="{% url 'meaning_result' item.id %}" class="btn btn-sm btn-primary">View</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="text-center text-muted">No meanings yet.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

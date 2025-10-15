@@ -1,22 +1,71 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Todo List</title>
-</head>
-<body>
-    <h1>My Todo List</h1>
+{% extends "base.html" %}
 
-    <a href="{% url 'create_todo' %}">Add New Todo</a>
-    <ul>
-        {% for todo in data %}
-            <li>
-                {{ todo.title }}
-                <a href="{% url 'update_todo' todo.pk %}">Edit</a>
-                <a href="{% url 'delete_todo' todo.pk %}">Delete</a>
-            </li>
-        {% empty %}
-            <li>No todos yet!</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block content %}
+<h3 class="mb-3">{{ topic.Heading }} - Points</h3>
+
+<a href="{% url 'add_point' topic.id %}" class="btn btn-primary mb-3">➕ Add Point</a>
+
+<ul class="list-group" id="todo-list">
+  {% for todo in data %}
+  <li class="list-group-item position-relative">
+    <span class="point-text">{{ todo.title }}</span>
+    <div class="float-end">
+      <a href="{% url 'update_point' todo.id %}" class="btn btn-sm btn-warning me-1">Edit</a>
+      <a href="{% url 'delete_point' todo.id %}" class="btn btn-sm btn-danger">Delete</a>
+    </div>
+  </li>
+  {% empty %}
+  <li class="list-group-item text-muted">No points added yet.</li>
+  {% endfor %}
+</ul>
+
+<!-- Floating Ask Meaning Button -->
+<button id="ask-meaning-btn" class="btn btn-info position-absolute" style="display:none; z-index:999;">
+  Ask Meaning
+</button>
+
+<script>
+const askBtn = document.getElementById('ask-meaning-btn');
+
+document.addEventListener('mouseup', function (e) {
+  const selection = window.getSelection();
+  const selectedText = selection.toString().trim();
+  const parentPoint = selection.anchorNode?.parentElement.closest('li.list-group-item');
+
+  if (selectedText.length > 0 && parentPoint) {
+    const rect = selection.getRangeAt(0).getBoundingClientRect();
+    askBtn.style.left = rect.right + window.scrollX + 10 + 'px';
+    askBtn.style.top = rect.top + window.scrollY + 'px';
+    askBtn.style.display = 'block';
+    askBtn.dataset.word = selectedText;
+    askBtn.dataset.topicId = '{{ topic.id }}';
+  } else {
+    askBtn.style.display = 'none';
+  }
+});
+
+askBtn.addEventListener('click', function () {
+  const word = askBtn.dataset.word;
+  const topicId = askBtn.dataset.topicId;
+
+  if (word) {
+    fetch("{% url 'ask_meaning' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ word: word, topic_id: topicId })
+    })
+    .then(res => {
+      // This will follow the redirect from Django automatically
+      if (res.redirected) {
+        window.location.href = res.url;
+      }
+    })
+    .catch(err => console.error(err));
+  }
+});
+
+</script>
+{% endblock %}

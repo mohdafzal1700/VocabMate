@@ -16,6 +16,10 @@ urlpatterns = [
     path('points/delete/<int:pk>/', views.DeletePointView, name='delete_point'),
 
     # AI Meaning Section 
-    path('ai/history/', views.MeaningHistoryView, name='ai_history'),
     path('ai/ask/', views.AskMeaningView, name='ask_meaning'),
+    path('ai/history/', views.MeaningHistoryView, name='meaning_history'),
+    path('ai/result/<int:id>/', views.MeaningResultView, name='meaning_result'),
+    path('ai/delete/<int:id>/', views.delete, name='delete_meaning'),
+    path('ai/delete_all/', views.DeleteAll, name='delete_all_meanings'),
+
 ]
